@@ -103,7 +103,7 @@ module.exports = (env) => {
                         transform(raw) {
                             let processed = JSON.parse(raw.toString());
 
-                            if (mode === 'development' && env.browser === 'chrome') {
+                            if (env.browser === 'chrome') {
                                 processed.key = CHROME_KEY;
                             }
 
