@@ -51,6 +51,7 @@ export async function pingSentTradeOffers(pendingTrades: Trade[]) {
                     offer_id: offer.offer_id,
                     given_asset_ids: offer.given_asset_ids || [],
                     received_asset_ids: offer.received_asset_ids || [],
+                    other_steam_id64: offer.other_steam_id64,
                 },
                 {}
             );
@@ -217,6 +218,7 @@ function offerStateMapper(e: TradeOffersAPIOffer): OfferStatus {
         received_asset_ids: (e.items_to_receive || []).map((e) => e.assetid),
         time_created: e.time_created,
         time_updated: e.time_updated,
+        other_steam_id64: (BigInt('76561197960265728') + BigInt(e.accountid_other)).toString(),
     } as OfferStatus;
 }
 
@@ -235,7 +237,7 @@ async function getSentTradeOffersFromAPI(): Promise<OfferStatus[]> {
     }
 
     const data = (await resp.json()) as TradeOffersAPIResponse;
-    return data.response.trade_offers_sent.map(offerStateMapper);
+    return (data.response?.trade_offers_sent || []).map(offerStateMapper);
 }
 
 async function getSentAndReceivedTradeOffersFromAPI(): Promise<{
@@ -258,8 +260,8 @@ async function getSentAndReceivedTradeOffersFromAPI(): Promise<{
 
     const data = (await resp.json()) as TradeOffersAPIResponse;
     return {
-        received: data.response.trade_offers_received.map(offerStateMapper),
-        sent: data.response.trade_offers_sent.map(offerStateMapper),
+        received: (data.response?.trade_offers_received || []).map(offerStateMapper),
+        sent: (data.response?.trade_offers_sent || []).map(offerStateMapper),
         steam_id: access.steam_id,
     };
 }
