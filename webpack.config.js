@@ -6,7 +6,7 @@ const webpack = require('webpack');
 const resolve = require('path').resolve;
 
 const CHROME_KEY =
-    'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmf6qYyrFypvvB0klM/hHhIdGO0bAnUT6ZK4fLqGl8/l5OWze2leeQkC/Nf0HOTQ50d2sdgXFuQDfHsMF+HQ5pUVIUT/25MzEXZWGwqi+JAxEX9Q/yGFFN53nI4m7mGNzCQ0TDUS3IrJsFfQBMEdv/fAwnhEitF/Ko9qn8/KYDzZqIjujwXKKeqlx+UXIvkgblI44RT9evwiqp+/WjZZ/YQzLa9tFhdz0Ct3Qvhn/03YrLAXa+yxXKpLAjQJ9DpYJoa++bJwluffinxKQUX0tm5dzFRSRKFCG92hKHnQHcQFUnBlDKF4LS0KQhgelyiTxN4GmKX7I1xQS/B1TByLL2wIDAQAB';
+    'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApSUxobOg0NBXozxCkieU2UiqSAohnuvOOW9DPvbiDL6QaQuiEnGZJ99VPQMEDeJStBbwjHYh0nVZPQiAjVTcMGGaPq74O74t1Jw7o4LP0A4W+/BsD11r3osGGSUP/mmjYEYtv0CAftRl/l1EY4Y0K71wrZymMI4PmFebxDoOzpPpN8vTTsS6C4Ba1xBE8Og/JQcWrVvZeJ19Gcn/A2Zb8nNB1I69eMeGkccOahdSvsaVl7gKy2oHvvbFYFbMzecc10tvnNxMPf0NNxXVDGIgPxkXAu5CzNRM/U4/89ywxw7AiRGOH/46HvpB5m8C5IY4Hmy+XkOIJVHR8QAU7bvycwIDAQAB';
 
 function getPathEntries(path) {
     return glob.sync(path).reduce((acc, e) => {
@@ -111,7 +111,7 @@ module.exports = (env) => {
                         transform(raw) {
                             let processed = JSON.parse(raw.toString());
 
-                            if (mode === 'development' && env.browser === 'chrome') {
+                            if (env.browser === 'chrome') {
                                 processed.key = CHROME_KEY;
                             }
 
