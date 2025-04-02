@@ -19,7 +19,7 @@ jobs:
   
         - name: Build and compress
           run: |
-            TAG="5.3.1-beta"
+            TAG="5.3.2"
             zip -r extension-source.zip .
             npm install
             npm run build
