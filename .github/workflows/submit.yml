@@ -16,18 +16,18 @@ jobs:
           run: |
             zip -r extension-source.zip .
 
-        - name: Download Release Artifacts
-          uses: dawidd6/action-download-artifact@v2
+        - name: Download Release Assets
+          uses: robinraju/release-downloader@v1
           with:
-            workflow: release.yml
-            run_id: ${{ github.event.workflow_run.id }}
-            path: artifacts
+            latest: true
+            out-file-path: "assets"
+            fileName: '*'
 
         - name: Chrome Web Store Publish
           uses: browser-actions/release-chrome-extension@v0.2.1
           with:
             extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
-            extension-path: "artifacts/extension-*-chrome.zip"
+            extension-path: "assets/extension-*-chrome.zip"
             oauth-client-id: ${{ secrets.OAUTH_CLIENT_ID }}
             oauth-client-secret: ${{ secrets.OAUTH_CLIENT_SECRET }}
             oauth-refresh-token: ${{ secrets.OAUTH_REFRESH_TOKEN }}
