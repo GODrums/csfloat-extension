@@ -1,38 +1,33 @@
 name: "Submit to Web Store"
 on:
-    workflow_dispatch:
+    workflow_run:
+        workflows: ["Extension Release"]
+        types:
+            - completed
 
 jobs:
     submit:
       runs-on: "ubuntu-latest"
   
-      strategy:
-        matrix:
-          node-version: [16.x]
-      
       steps:
         - uses: actions/checkout@v3
   
-        - uses: actions/setup-node@v3
-          with:
-            node-version: ${{ matrix.node-version }}
-  
-        - name: Build and compress
+        - name: Compress Repository
           run: |
-            TAG="5.3.2"
             zip -r extension-source.zip .
-            npm install
-            npm run build
-            (cd dist && zip -r ../extension-${TAG}-chrome.zip .)
-            rm -rf dist
-            npm run build_ff
-            (cd dist && zip -r ../extension-${TAG}-firefox.zip .)
-        - name: Browser Platform Publish
-          uses: PlasmoHQ/bpp@v3
+
+        - name: Download Release Artifacts
+          uses: dawidd6/action-download-artifact@v2
           with:
-            keys: ${{ secrets.SUBMIT_KEYS }}
-            chrome-file: "extension-{version}-chrome.zip"
-            firefox-file: "extension-{version}-firefox.zip"
-            version-file: "manifest.json"
-            source: "extension-source.zip"
-            verbose: true
+            workflow: release.yml
+            run_id: ${{ github.event.workflow_run.id }}
+            path: artifacts
+
+        - name: Chrome Web Store Publish
+          uses: browser-actions/release-chrome-extension@v0.2.1
+          with:
+            extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+            extension-path: "artifacts/extension-*-chrome.zip"
+            oauth-client-id: ${{ secrets.OAUTH_CLIENT_ID }}
+            oauth-client-secret: ${{ secrets.OAUTH_CLIENT_SECRET }}
+            oauth-refresh-token: ${{ secrets.OAUTH_REFRESH_TOKEN }}
