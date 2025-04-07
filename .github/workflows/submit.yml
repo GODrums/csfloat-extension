@@ -22,12 +22,19 @@ jobs:
             latest: true
             out-file-path: "assets"
             fileName: '*'
+            
+        - name: Find Chrome Extension Path
+          id: find-extension
+          run: |
+            CHROME_EXT_PATH=$(find assets -name "extension-*-chrome.zip" | head -n 1)
+            echo "Found Chrome extension at: $CHROME_EXT_PATH"
+            echo "extension_path=$CHROME_EXT_PATH" >> $GITHUB_OUTPUT
 
         - name: Chrome Web Store Publish
           uses: browser-actions/release-chrome-extension@v0.2.1
           with:
             extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
-            extension-path: "assets/extension-*-chrome.zip"
+            extension-path: ${{ steps.find-extension.outputs.extension_path }}
             oauth-client-id: ${{ secrets.OAUTH_CLIENT_ID }}
             oauth-client-secret: ${{ secrets.OAUTH_CLIENT_SECRET }}
             oauth-refresh-token: ${{ secrets.OAUTH_REFRESH_TOKEN }}
